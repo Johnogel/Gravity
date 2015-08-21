@@ -36,7 +36,7 @@ import javafx.stage.Stage;
  * @author Johnogel
  */
 public class GravityFx extends Application {
-public ArrayList<Planet> planets;
+public ArrayList<CircleCelestial> celestials;
 public Point2D origin, clickPoint;
 public double canvasOriginX = 0;
 public double canvasOriginY = 0;
@@ -75,16 +75,18 @@ public double canvasOriginY = 0;
         
         GraphicsContext gc = canvas.getGraphicsContext2D();
         
-        planets = new ArrayList<>();
-        
+        celestials = new ArrayList<>();
        
-        Gravity gravity = new Gravity(planets);
+       
+        Gravity gravity = new Gravity(celestials, origin);
         
         for (int i = 0; i < 70; i++){
-            planets.add(new Planet(Math.random()*20+2 ,Math.random()*canvas.getWidth(), Math.random()*canvas.getHeight(), new Color(Math.random(), Math.random(), Math.random(), 1)));
-            //planets.add(new Planet(Math.random()*5+2 ,Math.random()*canvas.getWidth(), Math.random()*canvas.getHeight(), new Color(Math.random(), Math.random(), Math.random(), 1)));
-            //planets.add(new Planet(Math.random()*20,20,Math.random()*canvas.getWidth(),new Color(Math.rando)));
-            planets.get(planets.size()-1).setVelocity(Math.random()*20-10, Math.random()*20-10);
+            celestials.add(new Planet(Math.random()*20+2 ,Math.random()*canvas.getWidth(), Math.random()*canvas.getHeight(), new Color(Math.random(), Math.random(), Math.random(), 1), origin));
+            //celestials.add(new Planet(Math.random()*5+2 ,Math.random()*canvas.getWidth(), Math.random()*canvas.getHeight(), new Color(Math.random(), Math.random(), Math.random(), 1)));
+            //celestials.add(new Planet(Math.random()*20,20,Math.random()*canvas.getWidth(),new Color(Math.rando)));
+            celestials.get(celestials.size()-1).setVelocity(Math.random()*20-10, Math.random()*20-10);
+            
+            
         }
         
         //planets.add(new Planet(20, 100, 100, Color.BLUE));
@@ -105,12 +107,9 @@ public double canvasOriginY = 0;
 //        Point2D p3 = new Point2D(200,80);
 //        
 //        System.out.println(""+p2.angle(p3, p1));
-      theScene.setOnKeyPressed(new EventHandler<KeyEvent>(){
-            
-            @Override
-            public void handle(KeyEvent event){
-                event.consume();
-                //System.out.println("Stufffff");
+      theScene.setOnKeyPressed((KeyEvent event) -> {
+          event.consume();
+          //System.out.println("Stufffff");
 //                planets.removeAll(planets);
 //                for (int i = 0; i < 150; i++){
 //                    
@@ -123,43 +122,25 @@ public double canvasOriginY = 0;
 //                    
 //                    }
 //                }
-                
-                
-            }
-            
-            
         });
-        canvas.setOnMousePressed(new EventHandler<MouseEvent>(){
-
-            @Override
-            public void handle(MouseEvent event) {
-                clickPoint = new Point2D(event.getX(), event.getY());
+        canvas.setOnMousePressed((MouseEvent event) -> {
+            clickPoint = new Point2D(event.getX(), event.getY());
 //                System.out.println("Origin Coordinates: ("+origin.getX()+", "+origin.getY()+"}");
 //                System.out.println("ClickPoint Coordinates: ("+clickPoint.getX()+", "+clickPoint.getY()+"}");
-            }
-            
         });
-        canvas.setOnMouseDragged(new EventHandler<MouseEvent>(){
-
-            @Override
-            public void handle(MouseEvent event) {
-                double dx = event.getX() - clickPoint.getX();
-                double dy = event.getY() - clickPoint.getY();
-                origin = new Point2D(dx+origin.getX(),  dy+origin.getY());
-                clickPoint =  new Point2D(clickPoint.getX()+ dx, clickPoint.getY()+ dy);
+        canvas.setOnMouseDragged((MouseEvent event) -> {
+            double dx = event.getX() - clickPoint.getX();
+            double dy = event.getY() - clickPoint.getY();
+            origin = new Point2D(dx+origin.getX(),  dy+origin.getY());
+            clickPoint =  new Point2D(clickPoint.getX()+ dx, clickPoint.getY()+ dy);
 //                System.out.println("Origin Coordinates: ("+origin.getX()+", "+origin.getY()+"}");
 //                System.out.println("ClickPoint Coordinates: ("+clickPoint.getX()+", "+clickPoint.getY()+"}");
-            }
-        
-        
         });
-        canvas.setOnScroll(new EventHandler<ScrollEvent>() {
-            @Override 
-            public void handle(ScrollEvent event) {
-                event.consume();
-
+        canvas.setOnScroll((ScrollEvent event) -> {
+            event.consume();
+            
             if (event.getDeltaY() == 0) {
-              return;
+                return;
             }
             
             double scaleFactor;
@@ -191,8 +172,6 @@ public double canvasOriginY = 0;
             
             
             //canvas.resize(canvas.getWidth()+root.getScaleX() * scaleFactor,canvas.getHeight()+ root.getScaleY() * scaleFactor);
-            
-          }
         });
         LongValue lastNanoTime = new LongValue(System.nanoTime());
          new AnimationTimer() {
@@ -221,19 +200,17 @@ public double canvasOriginY = 0;
                 //gravity.attract(elapsedTime);
                 gc.setFill(Color.BLACK);
                 gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-                gravity.attract(elapsedTime, gc, origin);
-                for(int i = 0; i < planets.size(); i++){
-                    planets.get(i).update(elapsedTime);
+                gravity.attract(elapsedTime);
+                celestials.stream().map((planet) -> {
+                    planet.update(elapsedTime);
+                    return planet;
+                }).forEach((planet) -> {
                     //planets.get(i).render(gc);
-                    planets.get(i).render(gc, origin);
+                    planet.render(gc);
                     //System.out.println(planets.get(i).toString());
-                }
-                
-
-//                for (Sprite moneybag : moneybagList) {
+                });//                for (Sprite moneybag : moneybagList) {
 //                    moneybag.render(gc);
 //                }
-
 //                String pointsText = "Cash: $" + (100 * score.value);
 //                gc.fillText(pointsText, 360, 36);
 //                gc.strokeText(pointsText, 362, 36);

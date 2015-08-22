@@ -16,8 +16,8 @@ import javafx.scene.shape.Circle;
  * @author Johnogel
  */
 public abstract class CircleCelestial extends Circle implements SpaceBody {
-    private double mass, velocityX, velocityY;
-    protected Point2D point; 
+    protected double mass, velocityX, velocityY;
+    protected Point2D point, origin; 
     protected Color color;
     @Override
     public double getMass() {
@@ -98,25 +98,29 @@ public abstract class CircleCelestial extends Circle implements SpaceBody {
 
     @Override
     public double getX() {
-        return this.getX(); //To change body of generated methods, choose Tools | Templates.
+        return this.getCenterX(); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public double getY() {
-        return this.getY();//To change body of generated methods, choose Tools | Templates.
+        return this.getCenterY();//To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void render(GraphicsContext gc) {
         gc.setFill(color);
-        gc.fillOval(this.getCenterX()-this.getRadius(), this.getCenterY() - this.getRadius(), this.getRadius() +this.getRadius(), this.getRadius() +this.getRadius()); //To change body of generated methods, choose Tools | Templates.
+        gc.fillOval(origin.getX()+this.getCenterX()-this.getRadius(), origin.getY() + this.getCenterY() - this.getRadius(), 
+                this.getRadius() +this.getRadius(), this.getRadius() +this.getRadius()); //To change body of generated methods, choose Tools | Templates.
     }
 
    
 
     @Override
     public void renderLines(GraphicsContext gc, SpaceBody p) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        gc.setStroke(Color.WHITE);
+        gc.strokeLine(origin.getX()+this.getX(), origin.getY()+this.getY(),origin.getX()+ p.getX(),origin.getY()+ p.getY());
+        //gc.strokeLine(origin.getX()+this.getX(), origin.getY()+this.getY(),origin.getX()+ p.getX(),origin.getY()+ this.getY());
+        //gc.strokeLine(origin.getX()+p.getX(), origin.getY()+this.getY(),origin.getX()+ p.getX(),origin.getY()+ p.getY()); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
@@ -132,7 +136,7 @@ public abstract class CircleCelestial extends Circle implements SpaceBody {
   
     public boolean intersects(CircleCelestial s) {
         return ((this.getRadius()+s.getRadius())*(this.getRadius()+s.getRadius()) > 
-                    (((this.getX()-s.getX())*(this.getX()-s.getX()))+((this.getY()-s.getY())*(this.getY()-s.getY())))); //To change body of generated methods, choose Tools | Templates.
+                    SpaceMath.distanceSquared(this, s)); //To change body of generated methods, choose Tools | Templates.
     }
 
    

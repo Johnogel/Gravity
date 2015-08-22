@@ -36,7 +36,7 @@ import javafx.stage.Stage;
  * @author Johnogel
  */
 public class GravityFx extends Application {
-public ArrayList<Planet> planets;
+public ArrayList<CircleCelestial> planets;
 public Point2D origin, clickPoint;
 public double canvasOriginX = 0;
 public double canvasOriginY = 0;
@@ -61,6 +61,7 @@ public double canvasOriginY = 0;
         pane.setPannable(true);
         
         root.getChildren().add(pane);
+        //root.getChildren().add(new SpaceShip())
         pane.setContent(canvas);
         
         //root.getChildren().add(canvas);
@@ -225,7 +226,7 @@ public double canvasOriginY = 0;
                 for(int i = 0; i < planets.size(); i++){
                     planets.get(i).update(elapsedTime);
                     //planets.get(i).render(gc);
-                    planets.get(i).render(gc, origin);
+                    planets.get(i).render(gc);
                     //System.out.println(planets.get(i).toString());
                 }
                 

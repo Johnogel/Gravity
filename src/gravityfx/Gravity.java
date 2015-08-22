@@ -16,13 +16,13 @@ import javafx.scene.canvas.GraphicsContext;
  * @author Johnogel
  */
 public class Gravity {
-private ArrayList<Planet> planets;
+private ArrayList<CircleCelestial> planets;
 
     
-    public Gravity(ArrayList<Planet> planets){
+    public Gravity(ArrayList<CircleCelestial> planets, Point2D origin){
         this.planets = planets;
     }
-    public void gravitate(Planet a, Planet b, double time){
+    public void gravitate(CircleCelestial a, CircleCelestial b, double time){
         if(!a.equals(b)){
             a.gravitateTo(b, time);
             b.gravitateTo(a, time);
@@ -30,26 +30,26 @@ private ArrayList<Planet> planets;
         }
     }
     
-    public boolean collisionTest(Planet a, Planet b){
+    public boolean collisionTest(CircleCelestial a, CircleCelestial b){
         if(!a.equals(b))
             return a.intersects(b);
         return false;
     }
     
-    public void combine(Planet a, Planet b)
+    public void combine(CircleCelestial a, CircleCelestial b)
     {
         if(!a.equals(b)){
             if(collisionTest(a, b)){
                 
                 if (planets.indexOf(a)>planets.indexOf(b)){
-                    Planet c = new Planet(a, b);
+                    CircleCelestial c = new Planet(a, b);
                     planets.set(planets.indexOf(b), c);
                     planets.remove(a);
                 }
 
                 
                 else{
-                    Planet c = new Planet(a, b);
+                    CircleCelestial c = new Planet(a, b);
                     planets.set(planets.indexOf(a), c);
                     planets.remove(b);
                 }
